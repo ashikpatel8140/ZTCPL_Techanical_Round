@@ -3,8 +3,7 @@ import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { User } from '../models/user';
-import { NewUserService } from '../services/user.service';
-import { UserService } from '../user.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-edit-user',
@@ -18,7 +17,7 @@ export class EditUserComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private newUserService: NewUserService
+    private newUserService: UserService
   ) {
     this.route.params.subscribe(params => {
       this.id = + params.id;

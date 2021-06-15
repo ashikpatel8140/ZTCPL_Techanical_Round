@@ -4,8 +4,7 @@ import { NgForm } from '@angular/forms';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { Subscription } from 'rxjs';
 import { User } from '../models/user';
-import { NewUserService } from '../services/user.service';
-import { UserService } from '../user.service';
+import { UserService } from '../services/user.service';
 
 
 @Component({
@@ -22,7 +21,7 @@ export class UserListComponent implements OnInit, OnDestroy {
 
   constructor(
     private modalService: BsModalService, 
-    private newUserService: NewUserService
+    private newUserService: UserService
   ) { 
     this.userSub = this.newUserService.users$.subscribe(data => {
       this.users = data;

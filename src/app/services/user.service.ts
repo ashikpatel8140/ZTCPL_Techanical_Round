@@ -5,7 +5,7 @@ import { User } from '../models/user';
 @Injectable({
     providedIn: 'root'
 })
-export class NewUserService {
+export class UserService {
     users = new BehaviorSubject<User[]>([]);
     users$ = this.users.asObservable();
 
@@ -28,6 +28,9 @@ export class NewUserService {
 
     /** Add user into list */
     addUser(user: User) {
+        if(!this.users.getValue()?.length){
+            this.users.next([]);
+        }
         this.users.getValue().push(new User(user));
         this.updateLocalStorage();
     }
