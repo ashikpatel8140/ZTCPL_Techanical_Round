@@ -9,6 +9,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { EditUserComponent } from './edit-user/edit-user.component';
 import { NumberDirective } from './directives/numbers-only.directive';
 import { NoSpaceDirective } from './directives/no-space.directive';
+import { NewUserService } from './services/user.service';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,9 @@ import { NoSpaceDirective } from './directives/no-space.directive';
     FormsModule,
     ModalModule.forRoot()
   ],
-  providers: [],
+  providers: [
+    NewUserService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

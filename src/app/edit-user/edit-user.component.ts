@@ -1,6 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { User } from '../models/user';
+import { NewUserService } from '../services/user.service';
 import { UserService } from '../user.service';
 
 @Component({
@@ -9,29 +12,27 @@ import { UserService } from '../user.service';
   styleUrls: ['./edit-user.component.css']
 })
 export class EditUserComponent implements OnInit {
-  id!:number;
-  user:any;
-  @ViewChild('f') form !: NgForm;
-  constructor(private route:ActivatedRoute,private userService:UserService,private router:Router) { 
+  id!: number;
+  user: User = new User();
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private newUserService: NewUserService
+  ) {
     this.route.params.subscribe(params => {
-      this.id= + params.id;
-    }); 
+      this.id = + params.id;
+      this.user = this.newUserService.getUserbyId(this.id);
+    });
   }
 
   ngOnInit(): void {
-    this.user = this.userService.getUserbyId(this.id);
   }
 
-  onEdit(form:NgForm){
-      if(form.valid){
-        const obj = {id:this.id,first_name:form.value.first_name,last_name:form.value.last_name,email:form.value.email,phone:form.value.phone} 
-        console.log(obj);
-       console.log(this.userService.users); 
-       localStorage.removeItem('users');
-       localStorage.setItem('users',JSON.stringify(this.userService.users));
-        this.router.navigate(['/']);
-      }
+  onEdit(form: NgForm) {
+    if (form.valid) {
+      this.newUserService.updateUser(this.user);
+      this.router.navigate(['/']);
+    }
   }
-  
-
 }

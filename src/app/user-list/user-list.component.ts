@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import {  TemplateRef } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { TemplateRef } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { Subscription } from 'rxjs';
+import { User } from '../models/user';
+import { NewUserService } from '../services/user.service';
 import { UserService } from '../user.service';
 
 
@@ -10,50 +13,46 @@ import { UserService } from '../user.service';
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.css']
 })
-export class UserListComponent implements OnInit {
-     users : {id:number,first_name:string,last_name:string,email:string,phone:number}[] = [
-        
-    ];
-    isUser = false;
-    
-    modalRef!: BsModalRef;
-    constructor(private modalService: BsModalService,private userService:UserService) {}
-   
-    openModal(template: TemplateRef<any>) {
-      this.modalRef = this.modalService.show(template);
-    }
-    generateId(){
-      return ;
-    }
+export class UserListComponent implements OnInit, OnDestroy {
 
-    onSubmit(form:NgForm){
-      if(form.valid){
-        const obj = {id:new Date().getMilliseconds(),first_name:form.value.first_name,last_name:form.value.last_name,email:form.value.email,phone:form.value.phone} 
-        this.userService.users.push(obj);  
-        this.userService.addUser(this.userService.users);
-        this.modalRef.hide();
-        this.isUser = true;
-      }
-    }
-    
-    onDelete(id:number){
-        // this.userService.removeUser(id);
+  users?: User[];
+  modalRef!: BsModalRef;
+  userSub: Subscription;
+  user: User = new User();
 
-        this.userService.users =  this.userService.users.filter(u=>{
-          return u.id != id
-        })
-        localStorage.removeItem('users');
-        localStorage.setItem('users',JSON.stringify(this.users));
-        this.loadData();
-    }
-  
+  constructor(
+    private modalService: BsModalService, 
+    private newUserService: NewUserService
+  ) { 
+    this.userSub = this.newUserService.users$.subscribe(data => {
+      this.users = data;
+    });
+  }
 
   ngOnInit(): void {
-    this.loadData();
   }
 
-  loadData(): void{
-    this.users = this.userService.users;
+  ngOnDestroy(): void{
+    if(this.userSub) this.userSub.unsubscribe();
   }
 
+  openModal(template: TemplateRef<any>) { this.modalRef = this.modalService.show(template); }
+
+  onSubmit(form: NgForm) {
+    if(form.valid){
+      this.newUserService.addUser(this.user);
+      this.closeModal();
+    }
+  }
+
+  /** Delete user */
+  onDelete(user: User) {
+    this.newUserService.deleteUser(user);
+  }
+
+  /** Modal Close */
+  closeModal(): void{
+    this.modalRef.hide();
+    this.user = new User();
+  }
 }
