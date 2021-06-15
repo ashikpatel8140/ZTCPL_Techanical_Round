@@ -1,0 +1,84 @@
+<div class="container">
+ <div class="row">
+        <h1>Users</h1>
+        <div class="d-flex justify-content-end">
+           <button type="button" class="btn btn-primary"  (click)="openModal(template)" >Add</button>
+        </div>  
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phone</th>
+                <th scope="col" colspan="2" class="text-center">Action</th>
+                
+            </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="users; than true else elseBlock">
+                    <tr *ngFor="let user of users;let i = index">
+                        <td>{{i+1}}</td>
+                        <td>{{user?.first_name}}</td>
+                        <td>{{user?.last_name}}</td>
+                        <td>{{user?.email}}</td>
+                        <td>{{user?.phone}}</td>
+                        <td scope="col"><button type="button" class="btn btn-secondary"  [routerLink] = "['edit', user.id]">Edit</button></td>
+                        <td scope="col"><button type="button" class="btn btn-danger" (click)="onDelete(user.id)">Delete</button></td>
+                    </tr>
+                </ng-container>
+               <ng-template #elseBlock>No Users</ng-template>
+            </tbody>    
+        </table>
+ </div>
+</div>
+
+
+
+ 
+<ng-template #template>
+    <form (ngSubmit)="onSubmit(f)" #f="ngForm">
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Modal</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    
+        <div class="form-group my-3">
+            <label for="first_name">First Name</label>
+            <input type="text" class="form-control" id="first_name" noSpace aria-describedby="emailHelp" placeholder="Enter First Name" required  name="first_name" ngModel #first_name="ngModel" >
+            <p class="help-block" *ngIf="first_name.errors?.required && first_name.touched">Please enter first name</p>
+        </div>
+        <div class="form-group my-3">
+            <label for="last_name">Last Name</label>
+            <input type="text" class="form-control" id="last_name" placeholder="Enter Last Name" noSpace name="last_name"  required ngModel #last_name="ngModel">
+            <p class="help-block" *ngIf="last_name.errors?.required && last_name.touched">Please enter last name</p>
+            
+        </div>
+        <div class="form-group my-3">
+            <label for="email">Email address</label>
+            <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email" email  required name="email" ngModel #email="ngModel">
+            <p class="help-block" *ngIf="email.errors?.required && email.touched">Please enter email</p>
+            <p class="help-block" *ngIf="email.errors?.email && email.touched">Please enter valid email</p>
+       </div>
+       <div  class="form-group my-3">
+            <label for="number">Phone No.</label>
+            <input type="text" class="form-control" id="number" aria-describedby="number" maxlength="10"  minlength="10" placeholder="Enter Number" numbersOnly  required name="phone" ngModel #phone="ngModel">
+            <p class="help-block" *ngIf="phone.errors?.required && phone.touched">Please enter valid number</p>
+            <p class="help-block" *ngIf="phone.errors?.minlength && phone.touched">Please enter 10 digit</p>
+            
+       </div>
+      
+      
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-primary">Add</button>
+    <button class="btn btn-danger mx-3" (click)="modalRef.hide()">Close</button>
+   </div>
+
+</form> 
+</ng-template>
